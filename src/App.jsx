@@ -2,7 +2,9 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [textoBusca, setTextoBusca] = useState("");
   const [items, setItems] = useState([]);
+  const [allItens, setAllItens] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dataType, setDataType] = useState("products");
@@ -22,6 +24,7 @@ function App() {
 
       const data = await response.json();
       setItems(data);
+      setAllItens(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,17 +47,27 @@ function App() {
 
       const data = await response.json();
       setItems(data);
+      setAllItens(data);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
+  function atualizaTexto(e){
+    setTextoBusca(e.target.value)
+    console.log("teste");
+    setItems(itens => {
+      if (!textoBusca) return allItens;
+      return itens.filter(item=> item.title.includes(textoBusca));      
+      //return itens;
+    })
+  }
 
   return (
     <div className="container">
       <h1>FakeStore</h1>
-
+      
       <div className="buttons">
         <button
           className={dataType === "products" ? "active" : ""}
@@ -74,6 +87,12 @@ function App() {
       {error && <div className="error">❌ {error}</div>}
 
       <div className="items">
+        {allItens.length>0 ? (
+        <form action="">
+          <label htmlFor="">Buscar</label>
+          <input type="text"  value={textoBusca} onChange={atualizaTexto}  />
+        </form>
+        ) : null }
 
         {items.map((item) => (
           <div className="item" key={item.id}>
